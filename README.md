@@ -6,9 +6,7 @@ OpenTelemetry *tracing* integration for the `database/sql` package.
 
 If using `github.com/lib/pq`:
 ```go
-var (
-    tp.Tracer("postgres")
-)
+var tracer trace.Tracer
 
 db, err := sql.Open(otsql.WrapDriver("postgres", &pq.Driver{}, tracer), dsn)
 if err != nil {
