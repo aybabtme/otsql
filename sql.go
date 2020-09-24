@@ -11,6 +11,11 @@ import (
 	"go.opentelemetry.io/otel/label"
 )
 
+var (
+	queryLbl = label.Key("query")
+	argsLbl  = label.Key("args")
+)
+
 type wrappedDriver struct {
 	tracer trace.Tracer
 	parent driver.Driver
@@ -111,8 +116,6 @@ func (c wrappedConn) BeginTx(ctx context.Context, opts driver.TxOptions) (tx dri
 	return wrappedTx{tracer: c.tracer, ctx: ctx, parent: tx}, nil
 }
 
-var errLbl = label.Key("err")
-
 func (c wrappedConn) PrepareContext(ctx context.Context, query string) (stmt driver.Stmt, err error) {
 	ctx, span := c.tracer.Start(ctx, "sql-prepare")
 	span.SetAttribute("component", "database/sql")
@@ -148,11 +151,6 @@ func (c wrappedConn) Exec(query string, args []driver.Value) (driver.Result, err
 
 	return nil, driver.ErrSkip
 }
-
-var (
-	queryLbl = label.Key("query")
-	argsLbl  = label.Key("args")
-)
 
 func (c wrappedConn) ExecContext(ctx context.Context, query string, args []driver.NamedValue) (r driver.Result, err error) {
 	ctx, span := c.tracer.Start(ctx, "sql-conn-exec")
