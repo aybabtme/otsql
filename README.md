@@ -1,6 +1,6 @@
 # otsql
 
-OpenTelemetry integration for the `database/sql` package.
+OpenTelemetry *tracing* integration for the `database/sql` package.
 
 ## Usage
 
@@ -10,7 +10,7 @@ var (
     tp.Tracer("postgres")
 )
 
-db, err := sql.Open(telemetry.WrapDriver("postgres", &pq.Driver{}, tracer), dsn)
+db, err := sql.Open(otsql.WrapDriver("postgres", &pq.Driver{}, tracer), dsn)
 if err != nil {
     return errors.Wrap(err, "opening DB")
 }
